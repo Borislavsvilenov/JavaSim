@@ -23,7 +23,7 @@ public class Sim extends JPanel implements ActionListener, KeyListener{
         this.w = w;
         this.h = h;
 
-        particles = new ArrayList<Particle>();
+        particles = new ArrayList<>();
 
         setBackground(Color.black);
         setPreferredSize(new Dimension(this.w, this.h));
@@ -31,9 +31,10 @@ public class Sim extends JPanel implements ActionListener, KeyListener{
         addKeyListener(this);
 
         this.cam = new Camera2(new Vector2(0, 0), new Vector2(this.w, this.h));
-        this.bounds = new Box2(new Vector2(0, 0), new Vector2(800, 800));
-        particles.add(new Particle(new Vector2(200, 200), new Vector2(2, 0), new Vector2(0, 0), 50, 10, true, Color.white));
-        particles.add(new Particle(new Vector2(400, 200), new Vector2(-2, 0), new Vector2(0, 0), 50, 10, true, Color.white));
+        this.bounds = new Box2(new Vector2(0, 0), new Vector2(2000, 2000));
+        particles.add(new Particle(new Vector2(500, 1000), new Vector2(0, 1), new Vector2(0, 0), 1, 10, true, Color.white));
+        particles.add(new Particle(new Vector2(1500, 1000), new Vector2(0, -1), new Vector2(0, 0), 1, 10, true, Color.white));
+        particles.add(new Particle(new Vector2(1000, 1000), new Vector2(0, 0), new Vector2(0, 0), 100, 50, true, Color.yellow));
 
         clock = new Timer(16, this);
         clock.start();
@@ -62,8 +63,13 @@ public class Sim extends JPanel implements ActionListener, KeyListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         // update particles
-        for (Particle p : particles) {
-            p.update(bounds);
+        for (int i = 0; i < particles.size(); i++) {
+            Particle particle1 = particles.get(i);
+            particle1.update(bounds);
+            for (int j = i+1; j < particles.size(); j++) {
+                Particle particle2 = particles.get(j);
+                particle1.attract(particle2);
+            }
         }
 
         // update camera

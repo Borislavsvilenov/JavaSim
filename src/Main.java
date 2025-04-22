@@ -4,8 +4,8 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        int Width = 800;
-        int Height = 800;
+        int Width = 1300;
+        int Height = 1300;
 
         JFrame frame = new JFrame("SIM");
         frame.setSize(Width, Height);

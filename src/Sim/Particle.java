@@ -13,19 +13,20 @@ public class Particle {
     int mass;
     public int rad;
 
-    double bounciness = 0.8;
+    static double bounciness = 0.8;
+    static double Gravity = 10;
 
     boolean movable;
 
     public Color color;
 
-    public Particle (Vector2 p, Vector2 v, Vector2 a, int mass, int r, boolean mv, Color c) {
+    public Particle (Vector2 p, Vector2 v, Vector2 a, int m, int r, boolean mv, Color c) {
         pos = p;
         posL = pos.sub(v);
         vel = v;
         acc = a;
-        this.mass = mass;
-        this.rad = r;
+        mass = m;
+        rad = r;
         movable = mv;
         color = c;
     }
@@ -35,17 +36,19 @@ public class Particle {
     }
 
     public void update (Box2 bounds) {
-        vel = pos.sub(posL);
+        if (movable) {
+            vel = pos.sub(posL);
 
-        applyBounds(bounds);
-        applyGravity();
-        vel = vel.add(acc);
+            applyBounds(bounds);
+            //applyGravity();
+            vel = vel.add(acc);
 
-        acc.x = 0;
-        acc.y = 0;
-        posL = pos;
+            acc.x = 0;
+            acc.y = 0;
+            posL = pos;
 
-        pos = pos.add(vel);
+            pos = pos.add(vel);
+        }
     }
     
     public void applyBounds (Box2 bounds) {
@@ -67,6 +70,17 @@ public class Particle {
                 pos.y = bounds.pos.y + bounds.size.y - rad;
                 vel.y = -vel.y * bounciness;
             }
+        }
+    }
+
+    public void attract (Particle other) {
+        Vector2 difference = this.pos.sub(other.pos);
+        Vector2 norm = difference.normalize();
+        double distance = difference.size();
+
+        if (distance != 0) {
+            this.acc = this.acc.add(norm.scale(-Gravity * other.mass / (distance * distance)));
+            other.acc = other.acc.add(norm.scale(Gravity * this.mass / (distance * distance)));
         }
     }
 }
